@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  payment_value: 9.99
+  due_data: 2021-03-30 20:16:19
+  enrollment: one
+  status: MyString
+
+two:
+  payment_value: 9.99
+  due_data: 2021-03-30 20:16:19
+  enrollment: two
+  status: MyString
