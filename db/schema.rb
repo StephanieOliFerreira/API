@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(version: 2021_03_30_231619) do
   end
 
   create_table "enrollments", force: :cascade do |t|
-    t.decimal "value"
-    t.integer "installment"
+    t.decimal "value_total"
+    t.integer "installments"
     t.integer "due_date"
     t.string "course_name"
     t.bigint "educational_institution_id", null: false
@@ -38,9 +38,9 @@ ActiveRecord::Schema.define(version: 2021_03_30_231619) do
 
   create_table "payments", force: :cascade do |t|
     t.decimal "payment_value"
-    t.datetime "due_data"
+    t.date "due_date"
     t.bigint "enrollment_id", null: false
-    t.string "status"
+    t.string "status", default: "Aberta"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["enrollment_id"], name: "index_payments_on_enrollment_id"

@@ -502,3 +502,218 @@ Processing by Api::V1::EnrollmentsController#index as */*
 Completed 200 OK in 13ms (Views: 7.2ms | ActiveRecord: 2.9ms | Allocations: 6905)
 
 
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (696.6ms)[0m  [1m[35mDROP DATABASE IF EXISTS "bilinho_development"[0m
+  [1m[35m (882.8ms)[0m  [1m[35mDROP DATABASE IF EXISTS "bilinho_test"[0m
+  [1m[35m (1768.2ms)[0m  [1m[35mCREATE DATABASE "bilinho_development" ENCODING = 'unicode'[0m
+  [1m[35m (1721.4ms)[0m  [1m[35mCREATE DATABASE "bilinho_test" ENCODING = 'unicode'[0m
+  [1m[35m (444.1ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (414.4ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT pg_try_advisory_lock(165216560776249920)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateEducationalInstitutions (20210324180312)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (377.7ms)[0m  [1m[35mCREATE TABLE "educational_institutions" ("id" bigserial primary key, "name" character varying, "cnpj" character varying, "institution_type" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (2.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210324180312"]]
+  [1m[36mTRANSACTION (36.5ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateStudents (20210325184926)
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (291.2ms)[0m  [1m[35mCREATE TABLE "students" ("id" bigserial primary key, "name" character varying, "cpf" character varying, "birthday" date, "cellphone" integer, "gender" character varying, "payment_method" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210325184926"]]
+  [1m[36mTRANSACTION (43.7ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateEnrollments (20210330164608)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (387.3ms)[0m  [1m[35mCREATE TABLE "enrollments" ("id" bigserial primary key, "value_total" decimal, "installments" integer, "due_date" integer, "course_name" character varying, "educational_institution_id" bigint NOT NULL, "student_id" bigint NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_63ef88d2c3"
+FOREIGN KEY ("educational_institution_id")
+  REFERENCES "educational_institutions" ("id")
+, CONSTRAINT "fk_rails_f01c555e06"
+FOREIGN KEY ("student_id")
+  REFERENCES "students" ("id")
+)[0m
+  [1m[35m (208.3ms)[0m  [1m[35mCREATE INDEX "index_enrollments_on_educational_institution_id" ON "enrollments" ("educational_institution_id")[0m
+  [1m[35m (57.7ms)[0m  [1m[35mCREATE INDEX "index_enrollments_on_student_id" ON "enrollments" ("student_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210330164608"]]
+  [1m[36mTRANSACTION (44.1ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreatePayments (20210330231619)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (212.1ms)[0m  [1m[35mCREATE TABLE "payments" ("id" bigserial primary key, "payment_value" decimal, "due_data" timestamp, "enrollment_id" bigint NOT NULL, "status" character varying DEFAULT 'Aberta', "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_f7dc98b00c"
+FOREIGN KEY ("enrollment_id")
+  REFERENCES "enrollments" ("id")
+)[0m
+  [1m[35m (143.0ms)[0m  [1m[35mCREATE INDEX "index_payments_on_enrollment_id" ON "payments" ("enrollment_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.7ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210330231619"]]
+  [1m[36mTRANSACTION (42.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.7ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-04-01 19:13:56.439088"], ["updated_at", "2021-04-01 19:13:56.439088"]]
+  [1m[36mTRANSACTION (21.2ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_advisory_unlock(165216560776249920)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (64.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (53.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (829.5ms)[0m  [1m[35mDROP DATABASE IF EXISTS "bilinho_development"[0m
+  [1m[35m (699.5ms)[0m  [1m[35mDROP DATABASE IF EXISTS "bilinho_test"[0m
+  [1m[35m (1980.5ms)[0m  [1m[35mCREATE DATABASE "bilinho_development" ENCODING = 'unicode'[0m
+  [1m[35m (1637.3ms)[0m  [1m[35mCREATE DATABASE "bilinho_test" ENCODING = 'unicode'[0m
+  [1m[35m (372.1ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (379.2ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(165216560776249920)[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateEducationalInstitutions (20210324180312)
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (357.1ms)[0m  [1m[35mCREATE TABLE "educational_institutions" ("id" bigserial primary key, "name" character varying, "cnpj" character varying, "institution_type" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210324180312"]]
+  [1m[36mTRANSACTION (36.6ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateStudents (20210325184926)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (362.3ms)[0m  [1m[35mCREATE TABLE "students" ("id" bigserial primary key, "name" character varying, "cpf" character varying, "birthday" date, "cellphone" integer, "gender" character varying, "payment_method" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210325184926"]]
+  [1m[36mTRANSACTION (36.8ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateEnrollments (20210330164608)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (275.5ms)[0m  [1m[35mCREATE TABLE "enrollments" ("id" bigserial primary key, "value_total" decimal, "installments" integer, "due_date" integer, "course_name" character varying, "educational_institution_id" bigint NOT NULL, "student_id" bigint NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_63ef88d2c3"
+FOREIGN KEY ("educational_institution_id")
+  REFERENCES "educational_institutions" ("id")
+, CONSTRAINT "fk_rails_f01c555e06"
+FOREIGN KEY ("student_id")
+  REFERENCES "students" ("id")
+)[0m
+  [1m[35m (189.5ms)[0m  [1m[35mCREATE INDEX "index_enrollments_on_educational_institution_id" ON "enrollments" ("educational_institution_id")[0m
+  [1m[35m (115.3ms)[0m  [1m[35mCREATE INDEX "index_enrollments_on_student_id" ON "enrollments" ("student_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210330164608"]]
+  [1m[36mTRANSACTION (40.7ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreatePayments (20210330231619)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (332.1ms)[0m  [1m[35mCREATE TABLE "payments" ("id" bigserial primary key, "payment_value" decimal, "due_date" date, "enrollment_id" bigint NOT NULL, "status" character varying DEFAULT 'Aberta', "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_f7dc98b00c"
+FOREIGN KEY ("enrollment_id")
+  REFERENCES "enrollments" ("id")
+)[0m
+  [1m[35m (125.7ms)[0m  [1m[35mCREATE INDEX "index_payments_on_enrollment_id" ON "payments" ("enrollment_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210330231619"]]
+  [1m[36mTRANSACTION (33.3ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.4ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-04-06 14:50:21.563362"], ["updated_at", "2021-04-06 14:50:21.563362"]]
+  [1m[36mTRANSACTION (31.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.9ms)[0m  [1m[34mSELECT pg_advisory_unlock(165216560776249920)[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mStudent Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."name" = $1 LIMIT $2[0m  [["name", "TeteOliLegends"], ["LIMIT", 1]]
+  [1m[36mStudent Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."cpf" = $1 LIMIT $2[0m  [["cpf", "012.345.678-90"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mEducationalInstitution Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "educational_institutions" WHERE "educational_institutions"."name" = $1 LIMIT $2[0m  [["name", "Unip"], ["LIMIT", 1]]
+  [1m[36mEducationalInstitution Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "educational_institutions" WHERE "educational_institutions"."cnpj" = $1 LIMIT $2[0m  [["cnpj", "06099229000101"], ["LIMIT", 1]]
+  [1m[36mEducationalInstitution Create (0.5ms)[0m  [1m[32mINSERT INTO "educational_institutions" ("name", "cnpj", "institution_type", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["name", "Unip"], ["cnpj", "06099229000101"], ["institution_type", "Universidade"], ["created_at", "2021-04-06 14:57:41.513356"], ["updated_at", "2021-04-06 14:57:41.513356"]]
+  [1m[36mTRANSACTION (95.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mStudent Load (0.3ms)[0m  [1m[34mSELECT "students".* FROM "students" ORDER BY "students"."id" DESC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mEducationalInstitution Load (0.3ms)[0m  [1m[34mSELECT "educational_institutions".* FROM "educational_institutions" ORDER BY "educational_institutions"."id" DESC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mStudent Load (0.3ms)[0m  [1m[34mSELECT "students".* FROM "students" ORDER BY "students"."id" DESC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mStudent Exists? (2.1ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."name" = $1 LIMIT $2[0m  [["name", "TeteOliLegends"], ["LIMIT", 1]]
+  [1m[36mStudent Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."cpf" = $1 LIMIT $2[0m  [["cpf", "012.345.678-90"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mStudent Exists? (4.3ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."name" = $1 LIMIT $2[0m  [["name", "TeteOliLegends"], ["LIMIT", 1]]
+  [1m[36mStudent Exists? (1.2ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."cpf" = $1 LIMIT $2[0m  [["cpf", "012.345.678-90"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mStudent Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."name" = $1 LIMIT $2[0m  [["name", "TeteOliLegends"], ["LIMIT", 1]]
+  [1m[36mStudent Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."cpf" = $1 LIMIT $2[0m  [["cpf", "01234567890"], ["LIMIT", 1]]
+  [1m[36mStudent Create (0.7ms)[0m  [1m[32mINSERT INTO "students" ("name", "cpf", "gender", "payment_method", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["name", "TeteOliLegends"], ["cpf", "01234567890"], ["gender", "F"], ["payment_method", "Cartao"], ["created_at", "2021-04-06 15:02:31.128682"], ["updated_at", "2021-04-06 15:02:31.128682"]]
+  [1m[36mTRANSACTION (67.8ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mEnrollment Load (0.6ms)[0m  [1m[34mSELECT "enrollments".* FROM "enrollments" ORDER BY "enrollments"."id" DESC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mEducationalInstitution Load (0.6ms)[0m  [1m[34mSELECT "educational_institutions".* FROM "educational_institutions" WHERE "educational_institutions"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mStudent Load (0.2ms)[0m  [1m[34mSELECT "students".* FROM "students" WHERE "students"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mEnrollment Create (0.9ms)[0m  [1m[32mINSERT INTO "enrollments" ("value_total", "installments", "due_date", "course_name", "educational_institution_id", "student_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"[0m  [["value_total", "1000.0"], ["installments", 10], ["due_date", 15], ["course_name", "ADS"], ["educational_institution_id", 1], ["student_id", 1], ["created_at", "2021-04-06 15:07:04.175580"], ["updated_at", "2021-04-06 15:07:04.175580"]]
+  [1m[36mPayment Create (0.6ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-04-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.188089"], ["updated_at", "2021-04-06 15:07:04.188089"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-05-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.190318"], ["updated_at", "2021-04-06 15:07:04.190318"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-06-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.191912"], ["updated_at", "2021-04-06 15:07:04.191912"]]
+  [1m[36mPayment Create (0.6ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-07-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.193583"], ["updated_at", "2021-04-06 15:07:04.193583"]]
+  [1m[36mPayment Create (0.4ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-08-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.196207"], ["updated_at", "2021-04-06 15:07:04.196207"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-09-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.197792"], ["updated_at", "2021-04-06 15:07:04.197792"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-10-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.199441"], ["updated_at", "2021-04-06 15:07:04.199441"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-11-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.201079"], ["updated_at", "2021-04-06 15:07:04.201079"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-12-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.202505"], ["updated_at", "2021-04-06 15:07:04.202505"]]
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2022-01-15"], ["enrollment_id", 1], ["created_at", "2021-04-06 15:07:04.204699"], ["updated_at", "2021-04-06 15:07:04.204699"]]
+  [1m[36mTRANSACTION (45.2ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mStudent Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."name" = $1 LIMIT $2[0m  [["name", "TeteOliLegends"], ["LIMIT", 1]]
+  [1m[36mStudent Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."cpf" = $1 LIMIT $2[0m  [["cpf", "01234567890"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mEducationalInstitution Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "educational_institutions" WHERE "educational_institutions"."name" = $1 LIMIT $2[0m  [["name", "Unip"], ["LIMIT", 1]]
+  [1m[36mEducationalInstitution Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "educational_institutions" WHERE "educational_institutions"."cnpj" = $1 LIMIT $2[0m  [["cnpj", "06099229000101"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mEducationalInstitution Load (0.3ms)[0m  [1m[34mSELECT "educational_institutions".* FROM "educational_institutions" WHERE "educational_institutions"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mStudent Load (0.1ms)[0m  [1m[34mSELECT "students".* FROM "students" WHERE "students"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mEnrollment Create (0.7ms)[0m  [1m[32mINSERT INTO "enrollments" ("value_total", "installments", "due_date", "course_name", "educational_institution_id", "student_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"[0m  [["value_total", "1000.0"], ["installments", 10], ["due_date", 15], ["course_name", "ADS"], ["educational_institution_id", 1], ["student_id", 1], ["created_at", "2021-04-06 15:10:33.195110"], ["updated_at", "2021-04-06 15:10:33.195110"]]
+  [1m[36mPayment Create (0.7ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-04-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.203853"], ["updated_at", "2021-04-06 15:10:33.203853"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.5ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-05-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.206794"], ["updated_at", "2021-04-06 15:10:33.206794"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-06-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.209202"], ["updated_at", "2021-04-06 15:10:33.209202"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.4ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-07-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.211155"], ["updated_at", "2021-04-06 15:10:33.211155"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.4ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-08-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.213085"], ["updated_at", "2021-04-06 15:10:33.213085"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-09-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.215437"], ["updated_at", "2021-04-06 15:10:33.215437"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-10-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.217578"], ["updated_at", "2021-04-06 15:10:33.217578"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-11-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.219825"], ["updated_at", "2021-04-06 15:10:33.219825"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-12-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.221662"], ["updated_at", "2021-04-06 15:10:33.221662"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2022-01-15"], ["enrollment_id", 2], ["created_at", "2021-04-06 15:10:33.223151"], ["updated_at", "2021-04-06 15:10:33.223151"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mTRANSACTION (101.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mStudent Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."name" = $1 LIMIT $2[0m  [["name", "TeteOliLegends"], ["LIMIT", 1]]
+  [1m[36mStudent Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "students" WHERE "students"."cpf" = $1 LIMIT $2[0m  [["cpf", "01234567890"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mEducationalInstitution Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "educational_institutions" WHERE "educational_institutions"."name" = $1 LIMIT $2[0m  [["name", "Unip"], ["LIMIT", 1]]
+  [1m[36mEducationalInstitution Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "educational_institutions" WHERE "educational_institutions"."cnpj" = $1 LIMIT $2[0m  [["cnpj", "06099229000101"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mEducationalInstitution Load (0.2ms)[0m  [1m[34mSELECT "educational_institutions".* FROM "educational_institutions" WHERE "educational_institutions"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mStudent Load (0.2ms)[0m  [1m[34mSELECT "students".* FROM "students" WHERE "students"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mEnrollment Create (0.6ms)[0m  [1m[32mINSERT INTO "enrollments" ("value_total", "installments", "due_date", "course_name", "educational_institution_id", "student_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"[0m  [["value_total", "1000.0"], ["installments", 10], ["due_date", 15], ["course_name", "ADS"], ["educational_institution_id", 1], ["student_id", 1], ["created_at", "2021-04-06 15:13:52.387101"], ["updated_at", "2021-04-06 15:13:52.387101"]]
+  [1m[36mPayment Create (0.5ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-04-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.396744"], ["updated_at", "2021-04-06 15:13:52.396744"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.4ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-05-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.398705"], ["updated_at", "2021-04-06 15:13:52.398705"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-06-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.400384"], ["updated_at", "2021-04-06 15:13:52.400384"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-07-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.401869"], ["updated_at", "2021-04-06 15:13:52.401869"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-08-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.403378"], ["updated_at", "2021-04-06 15:13:52.403378"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-09-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.405253"], ["updated_at", "2021-04-06 15:13:52.405253"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-10-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.407174"], ["updated_at", "2021-04-06 15:13:52.407174"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.3ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-11-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.409277"], ["updated_at", "2021-04-06 15:13:52.409277"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.2ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2021-12-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.410949"], ["updated_at", "2021-04-06 15:13:52.410949"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mPayment Create (0.2ms)[0m  [1m[32mINSERT INTO "payments" ("payment_value", "due_date", "enrollment_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["payment_value", "100.0"], ["due_date", "2022-01-15"], ["enrollment_id", 3], ["created_at", "2021-04-06 15:13:52.412574"], ["updated_at", "2021-04-06 15:13:52.412574"]]
+  ↳ app/models/enrollment.rb:31:in `block in insert_payment'
+  [1m[36mTRANSACTION (92.1ms)[0m  [1m[35mCOMMIT[0m
