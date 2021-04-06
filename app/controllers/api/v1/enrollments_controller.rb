@@ -22,6 +22,6 @@ class Api::V1::EnrollmentsController < ApplicationController
     end
 
     def enrollment_params
-        params.permit(:value, :installments, :due_date, :course_name, :educational_institution, :student)
+        params.permit(:value_total, :installments, :due_date, :course_name, :educational_institution, :student)
     end
 end
